@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Share2, RefreshCcw, Smile } from 'lucide-react';
+import { Share2, RefreshCcw, Smile, Link } from 'lucide-react';
 import { jsPDF } from 'jspdf';
 
 // Giphy API Key - it's generally better to store this in environment variables
@@ -57,7 +57,7 @@ function App() {
     fetchNewGif();
   }, []);
 
-  const handleShare = async () => {
+  const handleSharePdf = async () => {
     try {
       const pdf = new jsPDF({
         orientation: 'portrait',
@@ -102,6 +102,25 @@ function App() {
       URL.revokeObjectURL(imageUrl);
     } catch (err) {
       console.log('Sharing failed', err);
+    }
+  };
+
+  const handleShareLink = async () => {
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: 'Kind Reminder',
+          text: reminder,
+          url: window.location.href,
+        });
+      } catch (err) {
+        if (err instanceof Error && err.name !== 'AbortError') {
+          console.error('Sharing failed', err);
+        }
+      }
+    } else {
+      alert('Web Share API not supported in this browser. Try copying the link.');
+      console.log('Web Share API not supported.');
     }
   };
 
@@ -161,11 +180,19 @@ function App() {
                 */}
                 
                 <button 
-                  onClick={handleShare}
+                  onClick={handleSharePdf}
                   className="flex items-center gap-2 px-6 py-3 rounded-full bg-blue-50 text-blue-600 hover:bg-blue-100 transition-colors"
                 >
                   <Share2 size={20} />
-                  <span>Forward Kindly</span>
+                  <span>Forward Kindly (PDF)</span>
+                </button>
+
+                <button 
+                  onClick={handleShareLink}
+                  className="flex items-center gap-2 px-6 py-3 rounded-full bg-green-50 text-green-600 hover:bg-green-100 transition-colors"
+                >
+                  <Link size={20} />
+                  <span>Share Link</span>
                 </button>
               </div>
             </div>
