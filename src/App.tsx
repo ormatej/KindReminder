@@ -6,11 +6,27 @@ import { jsPDF } from 'jspdf';
 const GIPHY_API_KEY = 'sXpGFDGZs0Dv1mmNFvYaGUvYwKX0PWIh';
 
 // Business-focused passive aggressive reminders
-const reminders = [
-  "Your 'urgent' request from last month is still pending your input",
-  "Haven't heard back on those 27 emails I sent",
-  "We're still waiting for your 'ASAP' response from last Tuesday",
-
+const reminders = [ 
+  "Just circling back on this — I assume it's still on your radar?",
+  "Kind reminder that we’re still waiting for your feedback on the last three emails.",
+  "Gentle nudge — any update on this? We’re starting to worry we missed your response.",
+  "In case it slipped through the cracks, just pulling this back to the top of your inbox.",
+  "Re-attaching the file again, just in case the previous one got lost (again).",
+  "Just wanted to kindly remind you that your action is the only thing holding this up.",
+  "Let me know if there's someone else who should be handling this instead.",
+  "We’re happy to proceed once we receive your part. Still waiting.",
+  "Following up again — appreciate any update, even a quick 'still working on it'.",
+  "As mentioned in our previous [3] emails...",
+  "Just looping in [your boss] in case this fell off your radar.",
+  "Still waiting on your side before we can move forward — no pressure though!",
+  "Hope all is well. Still waiting on the delivery you promised last week.",
+  "Let us know if there’s a blocker we can help remove — or if there isn’t one.",
+  "Just checking in, as we’ve had no feedback since our last meeting — was expecting this to be done already.",
+  "Please confirm receipt of this email, as we’ve had no acknowledgment of the previous ones.",
+  "We’ll assume the current plan is fine unless we hear otherwise by EOD.",
+  "Per our earlier conversation, we were expecting [X] from your side by now.",
+  "Appreciate your attention to this — whenever it becomes a priority on your end.",
+  "Just one last reminder before we escalate this further."
 ];
 
 function App() {
@@ -25,11 +41,16 @@ function App() {
   const fetchNewGif = async () => {
     // Removed GiphyFetch initialization
     setIsLoading(true);
-    setReminder(getRandomReminder());
+    // Log the reminder selection
+    const newReminder = getRandomReminder();
+    console.log('Selected new reminder:', newReminder); 
+    setReminder(newReminder);
+    console.log('Called setReminder'); 
+
     try {
       // Construct the Giphy API URL with cache-busting timestamp
       const timestamp = new Date().getTime();
-      const giphyUrl = `https://api.giphy.com/v1/gifs/random?api_key=${GIPHY_API_KEY}&tag=office%20passive%20aggressive&rating=g&timestamp=${timestamp}`;
+      const giphyUrl = `https://api.giphy.com/v1/gifs/random?api_key=${GIPHY_API_KEY}&tag=noted&rating=g&timestamp=${timestamp}`;
       
       // Use native fetch
       const response = await fetch(giphyUrl);
