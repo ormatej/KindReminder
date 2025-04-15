@@ -150,12 +150,15 @@ function App() {
               </button>
               
               <div className="flex gap-4">
+                {/* Remove the 'Noted' button */}
+                {/* 
                 <button 
                   className="flex items-center gap-2 px-6 py-3 rounded-full bg-purple-50 text-purple-600 hover:bg-purple-100 transition-colors"
                 >
                   <Smile size={20} />
                   <span>Noted</span>
                 </button>
+                */}
                 
                 <button 
                   onClick={handleShare}
