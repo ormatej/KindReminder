@@ -50,7 +50,7 @@ function App() {
     try {
       // Construct the Giphy API URL with cache-busting timestamp
       const timestamp = new Date().getTime();
-      const giphyUrl = `https://api.giphy.com/v1/gifs/random?api_key=${GIPHY_API_KEY}&tag=meh&rating=g&timestamp=${timestamp}`;
+      const giphyUrl = `https://api.giphy.com/v1/gifs/random?api_key=${GIPHY_API_KEY}&tag=gloves-on&rating=g&timestamp=${timestamp}`;
       
       // Use native fetch
       const response = await fetch(giphyUrl);
