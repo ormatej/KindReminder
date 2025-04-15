@@ -8,22 +8,22 @@ const GIPHY_API_KEY = 'sXpGFDGZs0Dv1mmNFvYaGUvYwKX0PWIh';
 // Business-focused passive aggressive reminders
 const reminders = [ 
   "Just circling back on this — I assume it's still on your radar?",
-  "Kind reminder that we’re still waiting for your feedback on the last three emails.",
-  "Gentle nudge — any update on this? We’re starting to worry we missed your response.",
+  "Kind reminder that we're still waiting for your feedback on the last three emails.",
+  "Gentle nudge — any update on this? We're starting to worry we missed your response.",
   "In case it slipped through the cracks, just pulling this back to the top of your inbox.",
   "Re-attaching the file again, just in case the previous one got lost (again).",
   "Just wanted to kindly remind you that your action is the only thing holding this up.",
   "Let me know if there's someone else who should be handling this instead.",
-  "We’re happy to proceed once we receive your part. Still waiting.",
+  "We're happy to proceed once we receive your part. Still waiting.",
   "Following up again — appreciate any update, even a quick 'still working on it'.",
   "As mentioned in our previous [3] emails...",
   "Just looping in [your boss] in case this fell off your radar.",
   "Still waiting on your side before we can move forward — no pressure though!",
   "Hope all is well. Still waiting on the delivery you promised last week.",
-  "Let us know if there’s a blocker we can help remove — or if there isn’t one.",
-  "Just checking in, as we’ve had no feedback since our last meeting — was expecting this to be done already.",
-  "Please confirm receipt of this email, as we’ve had no acknowledgment of the previous ones.",
-  "We’ll assume the current plan is fine unless we hear otherwise by EOD.",
+  "Let us know if there's a blocker we can help remove — or if there isn't one.",
+  "Just checking in, as we've had no feedback since our last meeting — was expecting this to be done already.",
+  "Please confirm receipt of this email, as we've had no acknowledgment of the previous ones.",
+  "We'll assume the current plan is fine unless we hear otherwise by EOD.",
   "Per our earlier conversation, we were expecting [X] from your side by now.",
   "Appreciate your attention to this — whenever it becomes a priority on your end.",
   "Just one last reminder before we escalate this further."
@@ -82,21 +82,30 @@ function App() {
     try {
       const pdf = new jsPDF({
         orientation: 'portrait',
-        unit: 'px',
-        format: [800, 600]
+        unit: 'pt',
+        format: 'a4'
       });
 
-      // Add title and reminder
-      pdf.setFontSize(28);
-      pdf.setTextColor(75, 85, 99);
-      pdf.text('Kind Reminder', 400, 60, { align: 'center' });
-      
-      pdf.setFontSize(16);
-      pdf.setTextColor(100, 100, 100);
-      const lines = pdf.splitTextToSize(reminder, 700);
-      pdf.text(lines, 400, 90, { align: 'center' });
+      const pageWidth = pdf.internal.pageSize.getWidth();
+      const pageHeight = pdf.internal.pageSize.getHeight();
+      const margin = 40;
+      const maxTextWidth = pageWidth - margin * 2;
+      const contentStartY = margin + 40;
 
-      // Add the image
+      pdf.setFontSize(24);
+      pdf.setTextColor(75, 85, 99);
+      pdf.text('Kind Reminder', pageWidth / 2, margin + 20, { align: 'center' });
+      
+      pdf.setFontSize(12);
+      pdf.setTextColor(100, 100, 100);
+      const lines = pdf.splitTextToSize(reminder, maxTextWidth);
+      pdf.text(lines, pageWidth / 2, contentStartY, { align: 'center' });
+
+      const textHeight = lines.length * pdf.getLineHeight() * 0.6;
+      const imageStartY = contentStartY + textHeight + 20;
+      const maxImageHeight = pageHeight - imageStartY - margin;
+      const maxImageWidth = pageWidth - margin * 2;
+
       const response = await fetch(gifUrl);
       const blob = await response.blob();
       const imageUrl = URL.createObjectURL(blob);
@@ -105,9 +114,16 @@ function App() {
         const img = new Image();
         img.src = imageUrl;
         img.onload = () => {
-          const imgWidth = 720;
-          const imgHeight = (img.height * imgWidth) / img.width;
-          pdf.addImage(img, 'PNG', 40, 140, imgWidth, imgHeight);
+          const widthRatio = maxImageWidth / img.width;
+          const heightRatio = maxImageHeight / img.height;
+          const scale = Math.min(widthRatio, heightRatio);
+
+          const imgWidth = img.width * scale;
+          const imgHeight = img.height * scale;
+
+          const imgX = (pageWidth - imgWidth) / 2;
+
+          pdf.addImage(img, 'PNG', imgX, imageStartY, imgWidth, imgHeight);
           resolve(null);
         };
       });
